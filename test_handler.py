@@ -21,7 +21,7 @@ def setup():
         "event": {
             "temp1": "test"
         },
-        "expected_body": "test"
+        "expected_body": "Good Day from CloudBot!"
     }
 
 
