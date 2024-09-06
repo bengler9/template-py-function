@@ -1,13 +1,20 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 Description: DevOpsBot Bootstrap Lambda Function
+Parameters:
+  ARTIFACTSBUCKET:
+    Type: String
+  S3Key:
+    Type: String
 Resources:
   ServiceUpdatesFunction:
     Type: "AWS::Serverless::Function"
     Properties:
       Handler: lambda_function.lambda_handler
       Runtime: python3.12
-      CodeUri: s3://cloudbot-build-artifacts/$ACCOUNTID/$NAME/lambda_function.zip
+      CodeUri:
+        Bucket: !Ref ARTIFACTSBUCKET
+        Key: !Ref S3Key
       Timeout: 10
       Description: "DevOpsBot Bootstrap Lambda Function"
       Policies:
