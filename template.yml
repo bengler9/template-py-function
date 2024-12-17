@@ -7,7 +7,7 @@ Parameters:
   S3Key:
     Type: String
 Resources:
-  ServiceUpdatesFunction:
+  LambdaFunction:
     Type: "AWS::Serverless::Function"
     Properties:
       Handler: lambda_function.lambda_handler
@@ -16,6 +16,7 @@ Resources:
         Bucket: !Ref ARTIFACTSBUCKET
         Key: !Ref S3Key
       Timeout: 10
+      MemorySize: 128
       Description: "DevOpsBot Bootstrap Lambda Function"
       Policies:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
