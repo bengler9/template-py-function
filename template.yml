@@ -1,23 +1,51 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
-Description: DevOpsBot Bootstrap Lambda Function
+Description: CloudBot Bootstrap Python Lambda Function
+
 Parameters:
   ARTIFACTSBUCKET:
     Type: String
+    Description: "S3 bucket containing Lambda function code"
+    AllowedPattern: "[a-zA-Z0-9-.]+"
   S3Key:
     Type: String
+    Description: "S3 key for Lambda function code package"
+    AllowedPattern: ".+"
+  ACCOUNTID:
+    Type: String
+    Description: "Account ID for template location"
+  NAME:
+    Type: String
+    Description: "Name for template location"
+
 Resources:
   LambdaFunction:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.12
+      FunctionName: !Join
+        - ''
+        - - !Select [0, !Split ['-stack', !Ref 'AWS::StackName']]
+          - !Select [1, !Split ['-stack', !Ref 'AWS::StackName']]
+      Handler: "lambda_function.lambda_handler"
+      Runtime: "python3.12"
       CodeUri:
         Bucket: !Ref ARTIFACTSBUCKET
         Key: !Ref S3Key
       Timeout: 10
       MemorySize: 128
-      Description: "DevOpsBot Bootstrap Lambda Function"
+      Description: "CloudBot Bootstrap Python Lambda Function"
       Policies:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/cloudbot-codepipeline-s3'
+      Environment:
+        Variables:
+          LOG_LEVEL: "DEBUG"
+      Tracing: "Active"  # Enable AWS X-Ray tracing
+
+Outputs:
+  LambdaFunctionName:
+    Description: "Name of the Lambda function"
+    Value: !Ref LambdaFunction
+  
+  LambdaFunctionArn:
+    Description: "ARN of the Lambda function"
+    Value: !GetAtt LambdaFunction.Arn
